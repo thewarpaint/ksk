@@ -5,22 +5,23 @@
     <title>Kueski Code Challenge!</title>
 
     <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="vendor.js"></script>
   </head>
   <body>
-    <form method="post" action="http://google.com/">
+    <form id="main" method="post" action="http://google.com/">
       <div>
         <label>
-          <input type="checkbox" name="input-checkbox" value="input-checkbox"> input-checkbox
+          <input class="checkbox" type="checkbox" name="input-checkbox" value="input-checkbox"> input-checkbox
         </label>
       </div>
 
       <div>
         <label>
-          <input type="radio" name="input-radio" value="input-radio-first"> input-radio-first
+          <input id="input-radio-first" type="radio" name="input-radio" value="input-radio-first"> input-radio-first
         </label>
 
         <label>
-          <input type="radio" name="input-radio" value="input-radio-second"> input-radio-second
+          <input id="input-radio-second" type="radio" name="input-radio" value="input-radio-second"> input-radio-second
         </label>
       </div>
 
