@@ -20,6 +20,12 @@
   "maxlen": 110,
   "globals": {
     "console": true,
+    "require": true,
+    "BehaviourLogger": true,
+    "EventHandler": true,
+    "EventLogger": true,
+    "Logger": true,
+    "Watchmen": true,
     "Util": true
   }
 }
