@@ -51,6 +51,7 @@ var Logger = {
 var EventLogger = {
   events: [],
   handlers: {},
+  unicodeRegex: /^U\+[0-9a-fA-F]+$/,
   supported: {
     click: {
       auto: true
@@ -86,7 +87,14 @@ var EventLogger = {
     mousemove: {
       throttle: true,
       wait: 1000
-    }
+    },
+    keyup: {
+      throttle: true,
+      wait: 1000
+    },
+    submit: {
+      auto: true
+    },
   },
 
   init: function (events) {
@@ -131,14 +139,17 @@ var EventLogger = {
   },
 
   getEventData: function (event) {
-    var properties = ['type'],
+    var properties = ['type', 'keyCode', 'keyIdentifier'],
         data = {
           target: this.getTargetData(event.target)
         };
 
     data.timestamp = Date.now();
-
     this.extractProperties(event, data, properties);
+
+    if(event.type === 'keyup' && (!data.keyIdentifier || this.unicodeRegex.test(data.keyIdentifier))) {
+      data.keyIdentifier = Util.getReadableKeyId(event);
+    }
 
     return data;
   },
@@ -174,7 +185,7 @@ var BehaviourLogger = {
   init: function () {
     Logger.init();
     EventLogger.init(['click', 'scroll', 'wheel', 'mousewheel', 'resize', 'focus', 'focusin', 'focusout',
-      'blur', 'mousemove']);
+      'blur', 'mousemove', 'keyup', 'submit']);
 
     this.userId = Math.floor(Math.random() * 9999999);
     Logger.log('BehaviourLogger ready! User id: ' + this.userId + ', timestamp: ' + Date.now());
