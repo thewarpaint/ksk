@@ -1,53 +1,5 @@
 'use strict';
 
-// http://www.anujgakhar.com/2013/05/22/cross-browser-event-handling-in-javascript/
-var EventHandler = {
-  bind: function(el, ev, fn) {
-    if(window.addEventListener) {
-      el.addEventListener(ev, fn, false);
-    } else if(window.attachEvent) {
-      el.attachEvent('on' + ev, fn);
-    } else {
-      el['on' + ev] = fn;
-    }
-  },
-
-  unbind: function(el, ev, fn) {
-    if(window.removeEventListener) {
-      el.removeEventListener(ev, fn, false);
-    } else if(window.detachEvent) {
-      el.detachEvent('on' + ev, fn);
-    } else {
-      el['on' + ev] = null;
-    }
-  },
-
-  stop: function(ev) {
-    var e = ev || window.event;
-    e.cancelBubble = true;
-    if (e.stopPropagation) {
-      e.stopPropagation();
-    }
-  }
-};
-
-var Logger = {
-  el: null,
-  textProperty: null,
-
-  init: function () {
-    this.el = document.getElementById('logger');
-
-    this.textProperty = this.el.innerText ? 'innerText' : 'textContent';
-
-    console.log('Logger ready!');
-  },
-
-  log: function (message) {
-    this.el[this.textProperty] += message + "\n";
-  }
-};
-
 var EventLogger = {
   events: [],
   handlers: {},
@@ -122,8 +74,7 @@ var EventLogger = {
     return function (event) {
       console.log(event);
       var logEntry = EventLogger.getEventData(event),
-          position,
-          size;
+          position;
 
       if(event.type === 'mousemove') {
         position = Util.getMousePositionFromEvent(event);
@@ -178,31 +129,3 @@ var EventLogger = {
     }
   }
 };
-
-var BehaviourLogger = {
-  userId: null,
-
-  init: function () {
-    Logger.init();
-    EventLogger.init(['click', 'scroll', 'wheel', 'mousewheel', 'resize', 'focus', 'focusin', 'focusout',
-      'blur', 'mousemove', 'keyup', 'submit']);
-
-    this.userId = Math.floor(Math.random() * 9999999);
-    console.log('BehaviourLogger ready!');
-    Logger.log('User id: ' + this.userId + ', timestamp: ' + Date.now());
-  }
-};
-
-if(document.addEventListener) {
-  document.addEventListener('DOMContentLoaded', BehaviourLogger.init);
-} else if(document.attachEvent) {
-  document.attachEvent('onreadystatechange', function () {
-    if(document.readyState === 'complete') {
-      BehaviourLogger.init();
-    }
-  });
-}
-
-// window.onbeforeunload = function(e) {
-//   return 'Dialog text here.';
-// };
