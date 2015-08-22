@@ -5,6 +5,19 @@
     <title>Kueski Code Challenge!</title>
 
     <script type="text/javascript" src="dist/watchmen.min.js"></script>
+    <script type="text/javascript">
+      (function(callback) {
+        if(document.addEventListener) {
+          document.addEventListener('DOMContentLoaded', callback);
+        } else if(document.attachEvent) {
+          document.attachEvent('onreadystatechange', function () {
+            if(document.readyState === 'complete') {
+              callback();
+            }
+          });
+        }
+      })(function () { Watchmen.init(); });
+    </script>
   </head>
   <body>
     <form id="main" method="post" action="http://google.com/">
