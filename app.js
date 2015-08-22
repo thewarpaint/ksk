@@ -188,7 +188,8 @@ var BehaviourLogger = {
       'blur', 'mousemove', 'keyup', 'submit']);
 
     this.userId = Math.floor(Math.random() * 9999999);
-    Logger.log('BehaviourLogger ready! User id: ' + this.userId + ', timestamp: ' + Date.now());
+    console.log('BehaviourLogger ready!');
+    Logger.log('User id: ' + this.userId + ', timestamp: ' + Date.now());
   }
 };
 

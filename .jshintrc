@@ -19,6 +19,7 @@
   "globalstrict": true,
   "maxlen": 110,
   "globals": {
-    "console": true
+    "console": true,
+    "Util": true
   }
 }
