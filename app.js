@@ -113,7 +113,18 @@ var EventLogger = {
   getHandler: function (/*eventName*/) {
     return function (event) {
       console.log(event);
-      var logEntry = EventLogger.getEventData(event);
+      var logEntry = EventLogger.getEventData(event),
+          position,
+          size;
+
+      if(event.type === 'mousemove') {
+        position = Util.getMousePositionFromEvent(event);
+        logEntry.x = position[0];
+        logEntry.y = position[1];
+      } else if(event.type === 'resize') {
+        logEntry.clientWidth = document.documentElement.clientWidth;
+        logEntry.clientHeight = document.documentElement.clientHeight;
+      }
 
       Logger.log(JSON.stringify(logEntry));
     };
