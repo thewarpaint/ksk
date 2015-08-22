@@ -203,3 +203,6 @@ if(document.addEventListener) {
   });
 }
 
+// window.onbeforeunload = function(e) {
+//   return 'Dialog text here.';
+// };
