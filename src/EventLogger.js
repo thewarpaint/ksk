@@ -1,9 +1,10 @@
 'use strict';
 
 var EventLogger = {
-  events: [],
-  handlers: {},
+  handlers: [],
   unicodeRegex: /^U\+[0-9a-fA-F]+$/,
+
+  // Supported events and additional behaviour for each one (only throttle and wait time so far)
   supported: {
     click: {
       auto: true
@@ -49,12 +50,13 @@ var EventLogger = {
     },
   },
 
+  // Add handlers for all selected events, making sure they are supported (whitelisted)
   init: function (events) {
     var handler;
 
     for(var i=0; i<events.length; i++) {
       if(this.supported[events[i]]) {
-        handler = this.getHandler(events[i]);
+        handler = this.eventHandler;
 
         if(!this.supported[events[i]].auto) {
           if(this.supported[events[i]].throttle) {
@@ -63,32 +65,40 @@ var EventLogger = {
         }
 
         EventHandler.bind(window, events[i], handler);
+        this.handlers.push({ eventName: events[i], handler: handler });
       }
     }
 
     console.log('EventLogger ready!');
   },
 
-  // Refactor without closure
-  getHandler: function (/*eventName*/) {
-    return function (event) {
-      console.log(event);
-      var logEntry = EventLogger.getEventData(event),
-          position;
-
-      if(event.type === 'mousemove') {
-        position = Util.getMousePositionFromEvent(event);
-        logEntry.x = position[0];
-        logEntry.y = position[1];
-      } else if(event.type === 'resize') {
-        logEntry.clientWidth = document.documentElement.clientWidth;
-        logEntry.clientHeight = document.documentElement.clientHeight;
-      }
-
-      Logger.log(JSON.stringify(logEntry));
-    };
+  // Remove all handlers
+  teardown: function () {
+    for(var i=0; i<this.handlers.length; i++) {
+      EventHandler.unbind(window, this.handlers[i].eventName, this.handlers[i].handler);
+    }
   },
 
+  // Generic event handler for all events, with specific behaviour for some (processing data, etc.)
+  // TODO: Add specific behaviour as functions in the supported event list?
+  eventHandler: function (event) {
+    var logEntry = EventLogger.getEventData(event),
+        position;
+
+    if(event.type === 'mousemove') {
+      position = Util.getMousePositionFromEvent(event);
+      logEntry.x = position[0];
+      logEntry.y = position[1];
+    } else if(event.type === 'resize') {
+      logEntry.clientWidth = document.documentElement.clientWidth;
+      logEntry.clientHeight = document.documentElement.clientHeight;
+    }
+
+    logEntry.userId = BehaviourLogger.userId;
+    Logger.log(logEntry);
+  },
+
+  // Get the required data for an event and its target, add timestamp and process keyup info
   getEventData: function (event) {
     var properties = ['type', 'keyCode', 'keyIdentifier'],
         data = {
@@ -105,8 +115,9 @@ var EventLogger = {
     return data;
   },
 
+  // Get the required data for a target and its parent form, if any
   getTargetData: function (target) {
-    var properties = ['id', 'name', 'className', 'value'],
+    var properties = ['id', 'name', 'className', 'value', 'checked', 'method', 'action'],
         data = {
           tagName: target.tagName ? target.tagName.toLowerCase() : 'html'
         };
@@ -120,8 +131,9 @@ var EventLogger = {
     return data;
   },
 
+  // Add properties from src to dest
   extractProperties: function (src, dest, properties) {
-    // Add forEach polyfill?
+    // TODO: Add forEach polyfill?
     for(var i=0; i<properties.length; i++) {
       if(src[properties[i]]) {
         dest[properties[i]] = src[properties[i]];
