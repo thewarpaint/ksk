@@ -1,18 +1,17 @@
 'use strict';
 
 var Logger = {
-  el: null,
-  textProperty: null,
+  socket: null,
 
   init: function () {
-    this.el = document.getElementById('logger');
-
-    this.textProperty = this.el.innerText ? 'innerText' : 'textContent';
+    this.socket = io('http://localhost:3000/');
 
     console.log('Logger ready!');
   },
 
-  log: function (message) {
-    this.el[this.textProperty] += message + "\n";
+  log: function (event) {
+    UILogger.log(event);
+
+    this.socket.emit('logEvent', event);
   }
 };

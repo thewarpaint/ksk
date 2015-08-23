@@ -8,9 +8,19 @@ var BehaviourLogger = {
   init: function (events) {
     Logger.init();
     EventLogger.init(events || this.defaultEvents);
+    UILogger.init('logger');
 
     this.userId = Math.floor(Math.random() * 9999999);
     console.log('BehaviourLogger ready!');
-    Logger.log('User id: ' + this.userId + ', timestamp: ' + Date.now());
+
+    event = {
+      type: 'init',
+      userId: this.userId,
+      timestamp: Date.now(),
+      userAgent: window.navigator.userAgent
+    };
+
+    Logger.log(event);
+  },
   }
 };
