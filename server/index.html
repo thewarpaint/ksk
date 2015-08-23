@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Code Challenge Dashboard!</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <style media="screen">
+      ul {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+      }
+
+      .user, .event {
+        border-radius: 3px;
+      }
+
+      .user {
+        background-color: #ecf0f1; /* $palette-clouds; */
+        margin-bottom: 12px;
+      }
+
+      .event {
+        border: 1px solid #bdc3c7; /* $palette-silver; */
+        margin: 9px 0;
+        padding: 9px 0;
+      }
+
+      .label-primary {
+        background-color: #3498db; /* $palette-peter-river; */
+      }
+
+      .label-default {
+        background-color: #2ecc71; /* $palette-emerald; */
+      }
+
+      code {
+        background-color: #bdc3c7; /* $palette-silver; */
+        color: #2c3e50; /* $palette-midnight-blue; */
+        border-radius: 2px;
+      }
+    </style>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script>
+      'use strict';
+
+      angular.module('WatchmenDashboardApp', [])
+        .controller('MainCtrl', function ($scope) {
+          $scope.socket = io();
+          $scope.users = {};
+
+          $scope.socket.on('persistEvent', function (event) {
+            if($scope.users[event.userId]) {
+              // Subsequent events
+              $scope.users[event.userId].events.push(event);
+            } else {
+              // First event (init)
+              $scope.users[event.userId] = event;
+              $scope.users[event.userId].events = [];
+              // $scope
+            }
+
+            $scope.$apply();
+          });
+        });
+    </script>
+  </head>
+  <body ng-app="WatchmenDashboardApp">
+    <div class="container" ng-controller="MainCtrl">
+      <h1>Dashboard</h1>
+
+      <div class="row user" ng-repeat="(userId, user) in users">
+
+        <div class="col-sm-3">
+          <h2>User: {{ userId }}</h2>
+
+          <p>User Agent: <code>{{ user.userAgent }}</code></p>
+          <p>Connection started: <code>{{ user.timestamp }}</code></p>
+        </div>
+
+        <div class="col-sm-9">
+          <div class="event" ng-repeat="event in user.events">
+            <div class="row">
+              <div class="col-sm-2 text-right">
+                Type
+              </div>
+              <div class="col-sm-10">
+                <span class="label label-primary">{{ event.type }}</span>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-2 text-right">
+                Target
+              </div>
+              <div class="col-sm-4">
+                <ul>
+                  <li>
+                    <span class="label label-default">
+                      {{ event.target.tagName }}
+                      <span ng-show="event.target.id">#{{ event.target.id }}</span>
+                      <span ng-show="event.target.className">.{{ event.target.className }}</span>
+                    </span>
+                  </li>
+                  <li ng-show="event.target.name">Name: <code>{{ event.target.name }}</code></li>
+                  <li ng-show="event.target.value">Value: <code>{{ event.target.value }}</code></li>
+                  <li ng-show="event.target.checked">Checked: <code>{{ event.target.checked }}</code></li>
+                  <li ng-show="event.target.method">Method: <code>{{ event.target.method }}</code></li>
+                  <li ng-show="event.target.action">Action: <code>{{ event.target.action }}</code></li>
+                </ul>
+              </div>
+
+              <div class="col-sm-2 text-right" ng-show="event.target.form">
+                Parent form
+              </div>
+              <div class="col-sm-4" ng-show="event.target.form">
+                <ul>
+                  <li>
+                    <span class="label label-default">
+                      {{ event.target.form.tagName }}
+                      <span ng-show="event.target.form.id">#{{ event.target.form.id }}</span>
+                      <span ng-show="event.target.form.className">.{{ event.target.form.className }}</span>
+                    </span>
+                  </li>
+                  <li ng-show="event.target.form.name">Name: <code>{{ event.target.form.name }}</code></li>
+                  <li ng-show="event.target.form.method">Method: <code>{{ event.target.form.method }}</code></li>
+                  <li ng-show="event.target.form.action">Action: <code>{{ event.target.form.action }}</code></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-2 text-right">
+                Data
+              </div>
+              <div class="col-sm-10">
+                <ul>
+                  <li>Timestamp: <code>{{ event.timestamp }}</code></li>
+                  <li ng-show="event.x">Position: <code>({{ event.x }}, {{ event.y }})</code></li>
+                  <li ng-show="event.clientWidth">Window size: <code>{{ event.clientWidth }} x
+                    {{ event.clientHeight }}</code></li>
+                  <li ng-show="event.keyCode">Key: <code>{{ event.keyIdentifier }} ({{ event.keyCode }})
+                    </code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
