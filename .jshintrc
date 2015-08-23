@@ -25,7 +25,9 @@
     "EventHandler": true,
     "EventLogger": true,
     "Logger": true,
+    "UILogger": true,
     "Watchmen": true,
-    "Util": true
+    "Util": true,
+    "angular": true
   }
 }
