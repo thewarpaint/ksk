@@ -65,6 +65,8 @@ Watchmen only exposes the three methods detailed above. The only way a user can 
 
 # Watchmen Server
 
+![Watchmen server](images/ksk-server-dashboard.png)
+
 ## Getting started
 
 To start Watchmen Server, run:
@@ -83,6 +85,8 @@ The socket.io server will listen on `http://localhost:3000/`. Then visit http://
 + Send events *only* to dashboard, avoid the broadcast.
 
 # Watchmen example
+
+![Watchmen example](images/ksk-client.png)
 
 Just open `client.html` in your favourite browser and see the events logged both here and in the dashboard.
 
