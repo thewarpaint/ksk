@@ -15,6 +15,10 @@ var Watchmen = {
   logCustomEvent: function (event) {
     event.isCustom = true;
     Logger.log(event);
+  },
+
+  enableDebug: function (elementId) {
+    UILogger.init(elementId);
   }
 };
 

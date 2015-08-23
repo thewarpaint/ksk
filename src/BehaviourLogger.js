@@ -10,7 +10,6 @@ var BehaviourLogger = {
     var event;
     Logger.init();
     EventLogger.init(events || this.defaultEvents);
-    UILogger.init('logger');
 
     this.userId = Math.floor(Math.random() * 9999999);
     console.log('BehaviourLogger ready!');
